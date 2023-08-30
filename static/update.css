@@ -1,0 +1,96 @@
+@charset "utf-8";
+/* new.html */
+*{
+    box-sizing: border-box;
+}
+
+.listadd{
+    width: 960px;
+    margin: 0 auto;
+    padding: 0 0;
+}
+
+.listadd_tl{
+    font-size: 40px;
+    font-weight: bold;
+    margin-bottom: 40px;
+    text-align: center;
+    color: #d7d7d7;
+}
+
+.listadd_table{
+    width: 100%;
+    margin-bottom: 20px;
+    border-collapse: collapse;
+}
+
+.listadd_item,
+.listadd_body {
+  padding: 20px;
+  border: 2px solid #707071;
+}
+
+.listadd_item{
+    text-align: left;
+    width: 30%;
+    background-color: #373737;
+    color: rgb(255, 255, 255);
+}
+
+.listadd_body{
+    width: 70%;
+    background-color: #494949;
+}
+
+.listadd_text {
+    width: 100%;
+    padding: 10px;
+    border-radius: 5px;
+    border: none;
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    max-width: 400px;
+    background-color: #292929;
+    color: #9b9b9b;
+  }
+
+
+.listadd_textarea {
+    width: 100%;
+    padding: 10px;
+    height: 200px;
+    border-radius: 5px;
+    border: none;
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    background-color: #292929;
+    color: #9b9b9b;
+  }
+
+.listadd_submit{
+    width: 250px;
+    background-color: rgb(138, 138, 138);
+    color: rgb(62, 62, 62);
+    font-weight: bold;
+    display: block;
+    margin: 0 auto;
+    font-size: 16px;
+    padding: 15px;
+    border-radius: 100vh;
+    border: none;
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    cursor: pointer;
+}
+
+.listadd_url{
+  color: rgb(255, 255, 255);
+}
+
+body {
+  background-color: #222222;
+  font-family: Arial, sans-serif;
+}

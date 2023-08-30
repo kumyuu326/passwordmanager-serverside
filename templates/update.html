@@ -1,0 +1,43 @@
+{% extends 'base.html' %}
+
+{% block header %}
+<link rel="stylesheet" href="{{url_for('static', filename='update.css')}}">
+{% endblock header %}
+
+{% block content %}
+
+<div class="listadd">
+  <h1 class="listadd_tl">ユーザ情報の更新</h1>
+  <form action='/u' method="post" class="listadd_form">
+      <table class="listadd_table">
+          <tr>
+              <th class="listadd_item">ユーザー名</th>
+              <td class="listadd_body">
+                  <input type="text" name="username" value="{{ list.username }}" class="listadd_text">
+              </td>
+          </tr>
+          <tr>
+              <th class="listadd_item">ウェブサイト</th>
+              <td class="listadd_body">
+                <div class="listadd_url">{{ list.hostname }}</div>
+              </td>
+          </tr>
+          <tr>
+              <th class="listadd_item">パスワード</th>
+              <td class="listadd_body">
+                  <input type="text" name="password" value="{{ list.password }}" class="listadd_text">
+              </td>
+          </tr>
+          <tr>
+              <th class="listadd_item">メモ</th>
+              <td class="listadd_body">
+                  <input type="text" name="text" value="{{ list.detail_text }}" class="listadd_textarea">
+              </td>
+          </tr>
+      </table>
+      <button type="submit" value="{{ list.id }}" name="id" class="listadd_submit">更新</button>
+  </form>
+</div>
+
+
+{% endblock content %}

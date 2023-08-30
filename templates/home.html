@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+
+{% block header %}
+<link rel="stylesheet" href="{{url_for('static', filename='home.css')}}">
+{% endblock header %}
+
+{% block content %}
+
+
+
+  {% for form in forms %}
+
+        <form action="/check" method="post">
+          <button type="submit" name="id" value="{{ form.id }}" class="rounded-button {% if loop.index == 1 %}top{% elif loop.revindex == 1 %}bottom{% endif %}">{{ form.hostname }}</button>
+        </form>
+
+  {% endfor %}
+
+{% endblock content %}

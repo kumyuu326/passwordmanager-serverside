@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+
+{% block header %}
+<link rel="stylesheet" href="{{url_for('static', filename='top.css')}}">
+{% endblock header %}
+
+{% block content %}
+
+<div class="box">
+  <div class="a"><a href="/Signup/email">新規作成</a></div>
+  <div class="a"><a href="/login">ログイン</a></div>
+</div>
+
+{% endblock content %}

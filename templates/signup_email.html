@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+
+{% block header %}
+<link rel="stylesheet" href="{{url_for('static', filename='login.css')}}">
+{% endblock header %}
+
+{% block content %}
+
+<div class="login">
+  <form method="post" class="login-container">
+    <p><input type="text" placeholder="email" name="email" required autocomplete="off"></p>
+    <p><input type="submit" id="signup" value="コード送信"></p>
+  </form>
+</div>
+
+
+
+{% endblock content %}

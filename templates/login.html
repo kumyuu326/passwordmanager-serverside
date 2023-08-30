@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+
+{% block header %}
+<link rel="stylesheet" href="{{url_for('static', filename='login.css')}}">
+{% endblock header %}
+
+{% block content %}
+
+<div class="login">
+  <form method="post" class="login-container">
+    <p><input type="text" name="email" placeholder="email" autocomplete="off"></p>
+    <p><input type="password" placeholder="password" name="password" id="password" required></p>
+    <input type="checkbox" id="password-check"><label for="password-check" style="font-size: 15px; color: rgb(187, 187, 187);">パスワードを表示する</label>
+    <p><input type="submit" id="login" value="コード送信"></p>
+  </form>
+</div>
+
+
+<script>
+  const pwd = document.getElementById('password');
+  const pwdCheck = document.getElementById('password-check');
+  pwdCheck.addEventListener('change', function() {
+      if(pwdCheck.checked) {
+          pwd.setAttribute('type', 'text');
+      } else {
+          pwd.setAttribute('type', 'password');
+      }
+  }, false);
+</script> 
+
+
+
+{% endblock content %}
