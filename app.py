@@ -5,29 +5,29 @@ import datetime
 from twilio.rest import Client
 from twilio.base.exceptions import TwilioRestException
 from flask import Flask, render_template, request, redirect, url_for, session, jsonify
+from sqlalchemy import asc, desc
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import UserMixin, LoginManager, current_user, login_required, login_user, logout_user
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_cors import CORS
 
 app = Flask(__name__)
-CORS(app, supports_credentials=True, origins='http://127.0.0.1:3000')
+CORS(app, supports_credentials=True, origins='*')
 app.config['SQLALCHEMY_BINDS'] = {
     'db1': 'sqlite:///user.db',
-    'db2': 'sqlite:///pwd.db'
+    'db2': 'sqlite:///pwd.db',
+    'db3': 'sqlite:///url.db'
 }
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = True
 app.config['SECRET_KEY'] = os.urandom(24)
-
-# app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///pwd.db'
 
 login_manager = LoginManager()
 login_manager.init_app(app)
 db = SQLAlchemy(app)
 
 TWILIO_ACCOUNT_SID="AC348d9e64b0f5495d684d1f190ae14093"
-TWILIO_AUTH_TOKEN="6c30598ed30858493be0a3b5536b76d3"
-TWILIO_VERIFY_SERVICE="VAea860eefaa3d75ad2b03ef0a7c01568f"
+TWILIO_AUTH_TOKEN="51f5bd31bd028d158c6ab1fab078c445"
+TWILIO_VERIFY_SERVICE="VA343ff244cecc0a29777da461e2f118ee"
 
 client = Client(TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN)
 
@@ -50,6 +50,13 @@ class AnUser(db.Model):
   email = db.Column(db.String(50))
   password = db.Column(db.String(18), nullable=False)
   text = db.Column(db.String)
+
+class Url(db.Model):
+  __bind_key__ = 'db3'
+  id = db.Column(db.Integer, primary_key=True)
+  user_id = db.Column(db.Integer, nullable=False)
+  hostname = db.Column(db.String(50))
+  pin = db.Column(db.String)
 
 
 with app.app_context():
@@ -168,9 +175,29 @@ def home():
   if request.method == 'POST':
     return '0'
   
-  forms = AnUser.query.filter(AnUser.user_id==current_user.id).with_entities(AnUser.id, AnUser.hostname, AnUser.email, AnUser.password).all()
+  forms = Url.query.filter(Url.user_id == current_user.id).order_by(asc("pin")).all()
+
+  for form in forms:
+    print(form.pin)
 
   return render_template('home.html', forms=forms)
+
+@app.route('/pin', methods=['POST', 'GET'])
+@login_required
+def pin():
+  if request.method == 'POST':
+    hostname = request.form["pin"]
+    item = Url.query.filter(Url.hostname==hostname, Url.user_id==current_user.id).all()
+    for i in item:
+      if i.pin == 'f':
+        i.pin = 'a'
+        db.session.commit()
+      else:
+        i.pin = 'f'
+        db.session.commit()
+    
+
+    return redirect('/home')
 
 @app.route('/data', methods=['POST', 'GET'])
 def data():
@@ -179,6 +206,7 @@ def data():
     hostname = request.form.get('hostname')
     username = request.form.get('email')
     password = request.form.get('password')
+    pin = 'f'
 
     print(user_id)
     print(hostname)
@@ -189,34 +217,45 @@ def data():
     db.session.add(form)
     db.session.commit()
 
+    add_unique_data(hostname, user_id)
+
   return 'f'
 
-@app.route('/detail/<int:id>', methods=['POST', 'GET'])
+def add_unique_data(hostname, user_id):
+    existing_data = Url.query.filter(Url.user_id==user_id, Url.hostname==hostname).first()
+    if existing_data:
+        print('0')
+    else:
+        form2 = Url(user_id=int(user_id), hostname=hostname)
+        db.session.add(form2)
+        db.session.commit()
+
+@app.route('/detail/<hostname>', methods=['POST', 'GET'])
 @login_required
-def detail(id):
-  list = AnUser.query.filter_by(id=id).one()
+def detail(hostname):
+  list = AnUser.query.filter_by(hostname=hostname).all()
   return render_template('detail.html', list=list)
 
 @app.route('/check', methods=['POST', 'GET'])
 @login_required
 def check():
   if request.method == 'POST':
-    id = request.form["id"]
-    return render_template('check.html', id=id)
+    hostname = request.form["hostname"]
+    return render_template('check.html', hostname=hostname)
 
 @app.route('/check/password', methods=['POST', 'GET'])
 @login_required
 def check_pass():
   if request.method == 'POST':
     password = request.form["password"]
-    id = request.form["id"]
+    hostname = request.form["hostname"]
 
     user = User.query.filter(User.id==current_user.id).first()
 
     if check_password_hash(user.ms_password, password):
-      return redirect(url_for('detail', id=id))
+      return redirect(url_for('detail', hostname=hostname))
     else:
-      return '0'
+      return 'パスワードが違います'
 
 @app.route('/delete', methods=['POST'])
 def delete():
@@ -225,6 +264,15 @@ def delete():
     list = AnUser.query.filter_by(id=id).first()
     db.session.delete(list)
     db.session.commit()
+
+    list2 = AnUser.query.filter(AnUser.hostname==list.hostname, AnUser.user_id==current_user.id).all()
+    if(list2 is None):
+      list3 = Url.query.filter(Url.hostname==list.hostname, Url.user_id==current_user.id).first()
+      db.session.delete(list3)
+      db.session.commit()
+    else:
+      print('まだ情報が存在します')
+
     return redirect('/home')
 
 @app.route('/update', methods=['POST', 'GET'])

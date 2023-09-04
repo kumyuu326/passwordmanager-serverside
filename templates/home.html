@@ -10,10 +10,31 @@
 
   {% for form in forms %}
 
-        <form action="/check" method="post">
-          <button type="submit" name="id" value="{{ form.id }}" class="rounded-button {% if loop.index == 1 %}top{% elif loop.revindex == 1 %}bottom{% endif %}">{{ form.hostname }}</button>
+      <div class="box">
+        <form action="/check" method="post" class="main-form">
+          <button type="submit" name="hostname" value="{{ form.hostname }}" class="rounded-button {% if loop.index == 1 %}top{% elif loop.revindex == 1 %}bottom{% endif %}">{{ form.hostname }}</button>
         </form>
+        <form action="/pin" method="post">
+        {% if form.pin == 'a' %}
+          <button type="submit" name="pin" value="{{ form.hostname }}" class="button" style="background-color: #599fdc;">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6" style="color: aliceblue;">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M18.375 12.739l-7.693 7.693a4.5 4.5 0 01-6.364-6.364l10.94-10.94A3 3 0 1119.5 7.372L8.552 18.32m.009-.01l-.01.01m5.699-9.941l-7.81 7.81a1.5 1.5 0 002.112 2.13" />
+            </svg>            
+          </button>
+        {% else %}
+          <button type="submit" name="pin" value="{{ form.hostname }}" class="button" style="background-color: #636363;">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6" style="color: aliceblue;">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M18.375 12.739l-7.693 7.693a4.5 4.5 0 01-6.364-6.364l10.94-10.94A3 3 0 1119.5 7.372L8.552 18.32m.009-.01l-.01.01m5.699-9.941l-7.81 7.81a1.5 1.5 0 002.112 2.13" />
+            </svg>            
+          </button>
+        {% endif %}
+        </form>
+      </div>
 
   {% endfor %}
+
+<script>
+  
+</script>
 
 {% endblock content %}

@@ -5,47 +5,54 @@
 {% endblock header %}
 
 {% block content %}
+
+{% for l in list %}
 <div class="outer-box">
-    <div class="box1">
-      <label>ユーザー名</label>
-      <input type="text" value="{{ list.username }}" class="input" disabled>
-    </div>
-    <div class="box2">
-      <label>ウェブサイト</label>
-      <a href="{{ list.hostname }}">{{ list.hostname }}</a>
-    </div>
-    <div class="box1">
-      <label>パスワード</label>
-      <input type="password" class="input" id="password" value="{{ list.password }}" disabled>
-      <input type="checkbox" id="password-check"><label for="password-check" style="font-size: 15px; color: rgb(187, 187, 187);">パスワードを表示する</label>
-    </div>
-    <div class="box1">
-      <label>メモ</label>
-      <input type="text" class="input" value="{{ list.text }}" disabled>
-      
-    </div>
+  <div class="box1">
+    <label>ユーザー名</label>
+    <input type="text" value="{{ l.username }}" class="input" disabled>
+  </div>
+  <div class="box2">
+    <label>ウェブサイト</label>
+    <a href="{{ l.hostname }}">{{ l.hostname }}</a>
+  </div>
+  <div class="box1">
+    <label>パスワード</label>
+    <input type="password" class="password-input input" value="{{ l.password }}" disabled>
+    <input type="checkbox" class="password-check"><label style="font-size: 15px; color: rgb(187, 187, 187);">パスワードを表示する</label>
+  </div>
+  <div class="box1">
+    <label>メモ</label>
+    <input type="text" class="input" value="{{ l.text }}" disabled>
+  </div>
 </div>
+
 <div class="outer-box2">
   <form action="/delete" method="post">
-    <button type="submit" name="id" value="{{ list.id }}" id="button">削除</button>
+    <button type="submit" name="id" value="{{ l.id }}" class="button">削除</button>
   </form>
 
   <form action="/update" method="post">
-    <button type="submit" name="id" value="{{ list.id }}" id="button">編集</button>
+    <button type="submit" name="id" value="{{ l.id }}" class="button">編集</button>
   </form>
 </div>
 
+{% endfor %}
+
 
 <script>
-  const pwd = document.getElementById('password');
-  const pwdCheck = document.getElementById('password-check');
-  pwdCheck.addEventListener('change', function() {
-      if(pwdCheck.checked) {
-          pwd.setAttribute('type', 'text');
+  const passwordInputs = document.querySelectorAll('.password-input');
+  const passwordCheckboxes = document.querySelectorAll('.password-check');
+
+  passwordCheckboxes.forEach((checkbox, index) => {
+    checkbox.addEventListener('change', function() {
+      if (this.checked) {
+        passwordInputs[index].setAttribute('type', 'text');
       } else {
-          pwd.setAttribute('type', 'password');
+        passwordInputs[index].setAttribute('type', 'password');
       }
-  }, false);
+    });
+  });
 </script> 
 
 

@@ -16,7 +16,9 @@
   border-bottom-left-radius: 10px;
   border-bottom-right-radius: 10px;
   background-color: #494949;
-  margin: 0 auto;
+  margin-left: auto;
+  margin-right: auto;
+  margin-bottom: 30px;
   border-top: 2px solid #707071;
   padding: 10px 12px;
 }
@@ -58,9 +60,8 @@ a {
   color: #fff;
 }
 
-#button{
+.button{
   padding: 5px 18px;
-  background-color: #5b5b5b;
   border-radius: 7px;
   border: 1px solid #838383;
   color: #80a1dc;
