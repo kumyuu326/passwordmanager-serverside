@@ -31,7 +31,6 @@ TWILIO_VERIFY_SERVICE="VA98f23dbd9107eef0238a1f0480db7b7c"
 
 client = Client(TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN)
 
-#ユーザークラス
 class User(UserMixin, db.Model):
   __bind_key__ = 'db1'
   id = db.Column(db.Integer, primary_key=True)
@@ -67,6 +66,7 @@ with app.app_context():
 def load_user(user_id):
   return User.query.get(int(user_id))
 
+
 #メールの送信
 def send_verification(email):
   try:
@@ -80,6 +80,7 @@ def send_verification(email):
   except TwilioRestException as e:
     print(e)
     return 'F'
+
 
 def check_verification_token(phone, token):
   check = client.verify \
@@ -96,9 +97,11 @@ def get_user_id():
     else:
         return jsonify(user_id=None)
 
+
 @app.route('/', methods=['POST', 'GET'])
 def top():
   return render_template('top.html')
+
 
 @app.route('/Signup/email', methods=['GET','POST'])
 def signup_email():
@@ -113,6 +116,7 @@ def signup_email():
 
   return render_template('signup_email.html')
 
+
 @app.route('/Signup/verifyme', methods=['POST', 'GET'])
 def signup_generate_verification_code():
   email = session['email']
@@ -122,6 +126,7 @@ def signup_generate_verification_code():
       return redirect('/Signup')
 
   return render_template('verifypage.html')
+
 
 @app.route('/Signup', methods=['POST', 'GET'])
 def signup():
@@ -140,6 +145,7 @@ def signup():
 
   return render_template('signup.html')
 
+
 @app.route('/login', methods=['POST', 'GET'])
 def login():
   email = None
@@ -157,15 +163,18 @@ def login():
          
   return render_template('login.html')
 
+
 @app.route('/login/verifyme', methods=['POST', 'GET'])
 def login_generate_verification_code():
   email = session['email']
   if request.method == 'POST':
     verification_code = request.form['verificationcode']
+
     if check_verification_token(email, verification_code):
       user = User.query.filter_by(email=email).first()
       login_user(user)
       return redirect('/home')
+
   return render_template('verifypage.html')
 
 
@@ -182,6 +191,7 @@ def home():
 
   return render_template('home.html', forms=forms)
 
+
 @app.route('/pin', methods=['POST', 'GET'])
 @login_required
 def pin():
@@ -195,9 +205,9 @@ def pin():
       else:
         i.pin = 'f'
         db.session.commit()
-    
 
     return redirect('/home')
+
 
 @app.route('/data', methods=['POST', 'GET'])
 def data():
@@ -217,18 +227,19 @@ def data():
     db.session.add(form)
     db.session.commit()
 
-    add_unique_data(hostname, user_id)
+    add_unique_data(hostname, user_id, pin)
 
   return 'f'
 
-def add_unique_data(hostname, user_id):
+def add_unique_data(hostname, user_id, pin):
     existing_data = Url.query.filter(Url.user_id==user_id, Url.hostname==hostname).first()
     if existing_data:
         print('0')
     else:
-        form2 = Url(user_id=int(user_id), hostname=hostname)
+        form2 = Url(user_id=int(user_id), hostname=hostname, pin=pin)
         db.session.add(form2)
         db.session.commit()
+
 
 @app.route('/detail/<hostname>', methods=['POST', 'GET'])
 @login_required
@@ -236,12 +247,14 @@ def detail(hostname):
   list = AnUser.query.filter_by(hostname=hostname).all()
   return render_template('detail.html', list=list)
 
+
 @app.route('/check', methods=['POST', 'GET'])
 @login_required
 def check():
   if request.method == 'POST':
     hostname = request.form["hostname"]
     return render_template('check.html', hostname=hostname)
+
 
 @app.route('/check/password', methods=['POST', 'GET'])
 @login_required
@@ -255,7 +268,8 @@ def check_pass():
     if check_password_hash(user.ms_password, password):
       return redirect(url_for('detail', hostname=hostname))
     else:
-      return 'パスワードが違います'
+      return print('パスワードが違います')
+
 
 @app.route('/delete', methods=['POST'])
 def delete():
@@ -266,7 +280,7 @@ def delete():
     db.session.commit()
 
     list2 = AnUser.query.filter(AnUser.hostname==list.hostname, AnUser.user_id==current_user.id).all()
-    if(list2 is None):
+    if not list2:
       list3 = Url.query.filter(Url.hostname==list.hostname, Url.user_id==current_user.id).first()
       db.session.delete(list3)
       db.session.commit()
@@ -274,6 +288,7 @@ def delete():
       print('まだ情報が存在します')
 
     return redirect('/home')
+
 
 @app.route('/update', methods=['POST', 'GET'])
 @login_required
@@ -283,6 +298,7 @@ def update():
         list = AnUser.query.filter_by(id=id).one()
 
         return render_template('update.html', list=list)
+        
 
 @app.route('/u', methods=['POST', 'GET'])
 @login_required
