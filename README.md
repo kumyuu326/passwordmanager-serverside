@@ -1,4 +1,5 @@
-『このアプリの説明』
+『このアプリの説明』  
+https://docs.google.com/presentation/d/1K9HtpjT2n-sURMpzncvujfkzJ0NKHvzgHmIlCyt6rMc/edit#slide=id.g285a06ba1f1_0_34  
 2段階認証があるパスワードマネージャー  
   
 「制作の動機」  
